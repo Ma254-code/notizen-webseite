@@ -1,1 +1,47 @@
+body {
+  font-family: system-ui, sans-serif;
+  padding: 2rem;
+  max-width: 700px;
+  margin: auto;
+  background: #f8f9fa;
+  color: #212529;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  resize: vertical;
+  margin-top: 1rem;
+}
+
+button {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.7rem 1.5rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: white;
+  padding: 0.7rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.4rem;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
 
