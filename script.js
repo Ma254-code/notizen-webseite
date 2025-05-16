@@ -1,4 +1,4 @@
-const API_BASE = "https://notizen-backend.username.repl.co"; // <-- Ersetze mit deinem Link
+const API_BASE = "https://workspace.marlonalbrechtl.repl.co"; // <-- Ersetze mit deinem Link
 
 async function loadNotes(user) {
   const res = await fetch(`${API_BASE}/notes/${user}`);
