@@ -64,6 +64,7 @@
   <ul id="notesList"></ul>
 
 <script>
+  // URL deines Replit-Backends, hier anpassen:
   const backendUrl = "https://workspace.marlonalbrechtl.repl.co";
 
   const noteForm = document.getElementById("noteForm");
@@ -72,17 +73,21 @@
 
   // Notizen laden und anzeigen, ohne private Notizen von Marlon & Mats
   async function loadNotes() {
-    const res = await fetch(`${backendUrl}/notes`);
-    const notes = await res.json();
-    // Filter: nur Notizen ohne owner oder andere Besitzer anzeigen
-    const publicNotes = notes.filter(n => !n.owner || (n.owner !== "Marlon" && n.owner !== "Mats"));
-    
-    notesList.innerHTML = "";
-    publicNotes.forEach(note => {
-      const li = document.createElement("li");
-      li.textContent = note.text;
-      notesList.appendChild(li);
-    });
+    try {
+      const res = await fetch(`${backendUrl}/notes`);
+      const notes = await res.json();
+      const publicNotes = notes.filter(n => !n.owner || (n.owner !== "Marlon" && n.owner !== "Mats"));
+
+      notesList.innerHTML = "";
+      publicNotes.forEach(note => {
+        const li = document.createElement("li");
+        li.textContent = note.text;
+        notesList.appendChild(li);
+      });
+    } catch (error) {
+      console.error("Fehler beim Laden der Notizen:", error);
+      notesList.innerHTML = "<li>Fehler beim Laden der Notizen</li>";
+    }
   }
 
   // Neue Notiz absenden
@@ -91,14 +96,17 @@
     const text = noteInput.value.trim();
     if (!text) return;
 
-    await fetch(`${backendUrl}/notes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }) // kein owner bei öffentlichen Notizen
-    });
-
-    noteInput.value = "";  // Eingabefeld leeren
-    loadNotes();           // Liste aktualisieren
+    try {
+      await fetch(`${backendUrl}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      noteInput.value = "";  // Eingabefeld leeren
+      loadNotes();           // Liste aktualisieren
+    } catch (error) {
+      console.error("Fehler beim Speichern der Notiz:", error);
+    }
   });
 
   // Initial Notizen laden
@@ -106,5 +114,3 @@
 </script>
 </body>
 </html>
-
-
