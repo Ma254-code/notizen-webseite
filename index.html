@@ -1,16 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <title>Öffentliche Notizen</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Öffentliche Notizen</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    background: #f9f9f9;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+  }
+  form {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+  input[type="text"] {
+    flex-grow: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+  }
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 0 4px 4px 0;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  li {
+    background: white;
+    margin-bottom: 0.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    word-wrap: break-word;
+  }
+</style>
 </head>
 <body>
-  <h1>📝 Öffentliche Notizen</h1>
-  <ul id="notes-list"></ul>
-  <textarea id="note-input" placeholder="Neue Notiz..."></textarea>
-  <button onclick="addNote('public')">Hinzufügen</button>
+  <h1>Öffentliche Notizen</h1>
+  <form id="noteForm">
+    <input type="text" id="noteInput" placeholder="Neue Notiz eingeben..." required autocomplete="off" />
+    <button type="submit">Speichern</button>
+  </form>
 
-  <script src="script.js"></script>
+  <ul id="notesList"></ul>
+
+<script>
+  const backendUrl = "https://notizen-backend.marlonalbrechtl.repl.co";
+
+  const noteForm = document.getElementById("noteForm");
+  const noteInput = document.getElementById("noteInput");
+  const notesList = document.getElementById("notesList");
+
+  // Notizen laden und anzeigen, ohne private Notizen von Marlon & Mats
+  async function loadNotes() {
+    const res = await fetch(`${backendUrl}/notes`);
+    const notes = await res.json();
+    // Filter: nur Notizen ohne owner oder andere Besitzer anzeigen
+    const publicNotes = notes.filter(n => !n.owner || (n.owner !== "Marlon" && n.owner !== "Mats"));
+    
+    notesList.innerHTML = "";
+    publicNotes.forEach(note => {
+      const li = document.createElement("li");
+      li.textContent = note.text;
+      notesList.appendChild(li);
+    });
+  }
+
+  // Neue Notiz absenden
+  noteForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const text = noteInput.value.trim();
+    if (!text) return;
+
+    await fetch(`${backendUrl}/notes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }) // kein owner bei öffentlichen Notizen
+    });
+
+    noteInput.value = "";  // Eingabefeld leeren
+    loadNotes();           // Liste aktualisieren
+  });
+
+  // Initial Notizen laden
+  loadNotes();
+</script>
 </body>
 </html>
+
 
